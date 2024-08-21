@@ -5,12 +5,12 @@ Este é um aplicativo de sistema bancário simples construído com a biblioteca 
 ## Contexto
 Este projeto é um exemplo de aplicação GUI (interface gráfica do usuário) para gerenciamento bancário utilizando Python e Tkinter. Ele inclui funcionalidades básicas de um banco, como:<br>
 
-Depositar: Adicionar dinheiro à conta.<br>
-Sacar: Retirar dinheiro da conta.<br>
-Extrato: Visualizar as transações realizadas.<br>
-Novo Usuário: Criar um novo usuário.<br>
-Nova Conta: Criar uma nova conta bancária para um usuário existente.<br>
-Listar Contas: Mostrar todas as contas cadastradas.<br>
+**Depositar:** Adicionar dinheiro à conta.<br>
+**Sacar:** Retirar dinheiro da conta.<br>
+**Extrato:** Visualizar as transações realizadas.<br>
+**Novo Usuário:** Criar um novo usuário.<br>
+**Nova Conta:** Criar uma nova conta bancária para um usuário existente.<br>
+**Listar Contas:** Mostrar todas as contas cadastradas.<br>
 O sistema tem limitações, como um número máximo de saques e um limite de saldo para saques.<br>
 
 ## Configuração
@@ -37,13 +37,13 @@ OU SE preferir clique com o botão direito do mouse no seu código e clique em: 
 ## Execução
 Após iniciar o aplicativo, a janela principal será exibida com um menu de opções. Você pode interagir com o sistema clicando nos botões disponíveis:<br>
 
-Depositar: Permite que você adicione dinheiro à conta.<br>
-Sacar: Permite que você retire dinheiro da conta.<br>
-Extrato: Mostra o extrato das transações realizadas.<br>
-Novo Usuário: Cria um novo usuário para o banco.<br>
-Nova Conta: Cria uma nova conta bancária para um usuário existente.<br>
-Listar Contas: Lista todas as contas cadastradas.<br>
-Sair: Fecha o aplicativo.<br>
+**Depositar:** Permite que você adicione dinheiro à conta.<br>
+**Sacar:** Permite que você retire dinheiro da conta.<br>
+**Extrato:** Mostra o extrato das transações realizadas.<br>
+**Novo Usuário:** Cria um novo usuário para o banco.<br>
+**Nova Conta:** Cria uma nova conta bancária para um usuário existente.<br>
+**Listar Contas:** Lista todas as contas cadastradas.<br>
+**Sair:** Fecha o aplicativo.<br>
 
 ## Estrutura
 O código está organizado da seguinte forma:
@@ -65,3 +65,5 @@ filtrar_usuario(self, cpf): Busca um usuário pelo CPF.<br>
 listar_contas(self): Lista todas as contas cadastradas.<br>
 Bloco principal (if __name__ == "__main__"): Cria a instância do Tkinter e inicia o loop principal do aplicativo.<br>
 
+## Contribuição
+Sinta-se à vontade para contribuir com melhorias ou correções neste projeto. Sugestões e pull requests são sempre bem-vindos.
