@@ -20,13 +20,19 @@ Certifique-se de ter o Python instalado:
 
 Você pode verificar isso executando python --version ou python3 --version no terminal.
 Clone o repositório ou baixe o código:
-git clone https://github.com/seu_usuario/seu_repositorio.git
-cd seu_repositorio
+
+```
+git clone https://github.com/leopxz/sistema_bancario.git
+cd sistema_bancario
+```
 
 Execute o código:
 
 No terminal, execute o script com:
-python nome_do_seu_script.py
+```
+python sistema_bancario.py
+```
+OU SE preferir clique com o botão direito do mouse no seu código e clique em: RUN PYTHON > RUN PYTHON FILE IN TERMINAL.
 
 ## Execução
 Após iniciar o aplicativo, a janela principal será exibida com um menu de opções. Você pode interagir com o sistema clicando nos botões disponíveis:
@@ -39,24 +45,23 @@ Nova Conta: Cria uma nova conta bancária para um usuário existente.
 Listar Contas: Lista todas as contas cadastradas.
 Sair: Fecha o aplicativo.
 
-Estrutura
+## Estrutura
 O código está organizado da seguinte forma:
 
-## BancoApp (Classe Principal):
+ BancoApp (Classe Principal):
+Contém todos os métodos e funcionalidades principais do aplicativo.<br>
 
-Contém todos os métodos e funcionalidades principais do aplicativo.
-Métodos:
-__init__(self, root): Inicializa a interface e configura o menu principal.
-create_main_menu(self): Cria o menu principal com botões de navegação.
-clear_screen(self): Limpa a tela atual para exibir uma nova interface.
-depositar(self): Permite depósitos na conta.
-sacar(self): Permite saques da conta com validação de saldo e limite.
-exibir_extrato(self): Exibe o extrato de transações e saldo atual.
-criar_usuario(self): Cria um novo usuário com validação de CPF.
-validar_cpf(self, cpf): Valida o formato e unicidade do CPF.
-criar_conta(self): Cria uma nova conta para um usuário existente.
-filtrar_usuario(self, cpf): Busca um usuário pelo CPF.
-listar_contas(self): Lista todas as contas cadastradas.
-Bloco principal (if __name__ == "__main__"):
+**Métodos:**<br>
+__init__(self, root): Inicializa a interface e configura o menu principal.<br>
+create_main_menu(self): Cria o menu principal com botões de navegação.<br>
+clear_screen(self): Limpa a tela atual para exibir uma nova interface.<br>
+depositar(self): Permite depósitos na conta.<br>
+sacar(self): Permite saques da conta com validação de saldo e limite.<br>
+exibir_extrato(self): Exibe o extrato de transações e saldo atual.<br>
+criar_usuario(self): Cria um novo usuário com validação de CPF.<br>
+validar_cpf(self, cpf): Valida o formato e unicidade do CPF.<br>
+criar_conta(self): Cria uma nova conta para um usuário existente.<br>
+filtrar_usuario(self, cpf): Busca um usuário pelo CPF.<br>
+listar_contas(self): Lista todas as contas cadastradas.<br>
+Bloco principal (if __name__ == "__main__"):<br>
 
-Cria a instância do Tkinter e inicia o loop principal do aplicativo.
