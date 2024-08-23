@@ -11,7 +11,8 @@ Este projeto é um exemplo de aplicação GUI (interface gráfica do usuário) p
 **Novo Usuário:** Criar um novo usuário.<br>
 **Nova Conta:** Criar uma nova conta bancária para um usuário existente.<br>
 **Listar Contas:** Mostrar todas as contas cadastradas.<br>
-O sistema tem limitações, como um número máximo de saques e um limite de saldo para saques.<br>
+
+Além dessas funcionalidades, o sistema agora também registra a data e hora de cada transação realizada, como saques, depósitos e visualização de extrato. O sistema possui limitações, como um número máximo de saques diários e um limite de valor para saques.<br>
 
 ## Configuração
 Para executar este aplicativo, você precisará ter o Python instalado no seu sistema. O Tkinter já está incluído na biblioteca padrão do Python, então você não precisa instalar pacotes adicionais.
@@ -64,6 +65,16 @@ criar_conta(self): Cria uma nova conta para um usuário existente.<br>
 filtrar_usuario(self, cpf): Busca um usuário pelo CPF.<br>
 listar_contas(self): Lista todas as contas cadastradas.<br>
 Bloco principal (if __name__ == "__main__"): Cria a instância do Tkinter e inicia o loop principal do aplicativo.<br>
+
+## Funções Auxiliares:<br>
+registrar_hora(): Retorna a data e hora atuais no formato dd/mm/aaaa hh:mm:ss.<br>
+sacar(*, saldo, valor, extrato, limite_saque, numero_saques, limite_saques): Função modular para sacar, com argumentos nomeados e validação de limites.<br>
+depositar(saldo, valor, extrato): Função modular para depositar, com argumentos posicionais.<br>
+exibir_extrato(saldo, *, extrato): Função modular para exibir o extrato, com argumentos mistos.<br>
+criar_usuario(usuarios, nome, data_nascimento, cpf, endereco): Função modular para criar um novo usuário, verificando a unicidade do CPF.<br>
+criar_conta(contas, usuarios, cpf): Função modular para criar uma nova conta bancária vinculada a um usuário existente.<br>
+listar_contas(contas): Função modular para listar todas as contas cadastradas.<br>
+
 
 ## Contribuição
 Sinta-se à vontade para contribuir com melhorias ou correções neste projeto. Sugestões e pull requests são sempre bem-vindos.
