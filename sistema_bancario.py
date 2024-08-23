@@ -158,4 +158,5 @@ class BancoApp:
 if __name__ == "__main__":
     root = tk.Tk()
     app = BancoApp(root)
-    root.mainloop()
+    root.mainloop()  
+    
