@@ -1,74 +1,89 @@
 import tkinter as tk
-from tkinter import messagebox, simpledialog, ttk
-import textwrap
+from tkinter import messagebox, simpledialog
 from datetime import datetime
 
-# Funções para operações bancárias
 
-def registrar_hora():
-    return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+# Classes de Transações e Operações Bancárias
 
-def sacar(*, saldo, valor, extrato, limite_saque, numero_saques, limite_saques):
-    if valor > saldo:
-        return saldo, extrato, numero_saques, "Saldo insuficiente."
-    elif valor > limite_saque:
-        return saldo, extrato, numero_saques, "O valor do saque excede o limite."
-    elif numero_saques >= limite_saques:
-        return saldo, extrato, numero_saques, "Número máximo de saques excedido."
-    else:
-        saldo -= valor
-        extrato += f"{registrar_hora()} - Saque:\tR$ {valor:.2f}\n"
-        numero_saques += 1
-        return saldo, extrato, numero_saques, "Saque realizado com sucesso."
+class Transacao:
+    def __init__(self, valor):
+        self.valor = valor
+        self.data = datetime.now()
 
-def depositar(saldo, valor, extrato):
-    saldo += valor
-    extrato += f"{registrar_hora()} - Depósito:\tR$ {valor:.2f}\n"
-    return saldo, extrato
+    def registrar(self, conta):
+        pass
 
-def exibir_extrato(saldo, *, extrato):
-    historico = extrato if extrato else "Não foram realizadas movimentações."
-    historico += f"{registrar_hora()} - Saldo:\t\tR$ {saldo:.2f}\n"
-    return historico
 
-def criar_usuario(usuarios, nome, data_nascimento, cpf, endereco):
-    if any(usuario['cpf'] == cpf for usuario in usuarios):
-        return usuarios, "Erro: CPF já cadastrado."
-    else:
-        usuarios.append({"nome": nome, "data_nascimento": data_nascimento, "cpf": cpf, "endereco": endereco})
-        return usuarios, "Usuário criado com sucesso."
+class Deposito(Transacao):
+    def registrar(self, conta):
+        conta.saldo += self.valor
+        conta.historico.adicionar_transacao(self)
 
-def criar_conta(contas, usuarios, cpf):
-    usuario = next((u for u in usuarios if u['cpf'] == cpf), None)
-    if usuario:
-        numero_conta = len(contas) + 1
-        conta = {"agencia": "0001", "numero_conta": numero_conta, "usuario": usuario}
-        contas.append(conta)
-        return contas, "Conta criada com sucesso."
-    else:
-        return contas, "Erro: Usuário não encontrado."
 
-def listar_contas(contas):
-    if not contas:
-        return "Nenhuma conta cadastrada."
-    else:
-        lista = ""
-        for conta in contas:
-            lista += f"\nAgência: {conta['agencia']}\nC/C: {conta['numero_conta']}\nTitular: {conta['usuario']['nome']}\n"
-        return lista
+class Saque(Transacao):
+    def registrar(self, conta):
+        if self.valor > conta.saldo:
+            raise ValueError("Saldo insuficiente")
+        conta.saldo -= self.valor
+        conta.historico.adicionar_transacao(self)
 
-# Classe do Aplicativo Bancário
 
+class Historico:
+    def __init__(self):
+        self.transacoes = []
+
+    def adicionar_transacao(self, transacao):
+        self.transacoes.append(transacao)
+
+    def exibir(self):
+        extrato = ""
+        for transacao in self.transacoes:
+            tipo = "Depósito" if isinstance(transacao, Deposito) else "Saque"
+            extrato += f"{transacao.data.strftime('%d/%m/%Y %H:%M:%S')} - {tipo}: R$ {transacao.valor:.2f}\n"
+        return extrato
+
+
+class Conta:
+    def __init__(self, numero, agencia, cliente):
+        self.saldo = 0
+        self.numero = numero
+        self.agencia = agencia
+        self.cliente = cliente
+        self.historico = Historico()
+
+    def sacar(self, valor):
+        saque = Saque(valor)
+        saque.registrar(self)
+
+    def depositar(self, valor):
+        deposito = Deposito(valor)
+        deposito.registrar(self)
+
+    def exibir_extrato(self):
+        return self.historico.exibir() + f"Saldo atual: R$ {self.saldo:.2f}"
+
+
+class Cliente:
+    def __init__(self, nome, cpf, endereco):
+        self.nome = nome
+        self.cpf = cpf
+        self.endereco = endereco
+        self.contas = []
+
+    def adicionar_conta(self, conta):
+        self.contas.append(conta)
+
+    def realizar_transacao(self, conta, transacao):
+        transacao.registrar(conta)
+
+
+# Classe principal do aplicativo bancário
 class BancoApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Sistema Bancário")
 
         self.LIMITE_SAQUES = 3
-        self.saldo = 0
-        self.limite_saque = 500
-        self.extrato = ""
-        self.numero_saques = 0
         self.usuarios = []
         self.contas = []
 
@@ -94,31 +109,56 @@ class BancoApp:
         self.clear_screen()
         tk.Label(self.root, text="Depositar", font=("Arial", 16)).pack(pady=10)
 
+        cpf = simpledialog.askstring("Depósito", "Informe o CPF do cliente:")
         valor = simpledialog.askfloat("Depositar", "Informe o valor do depósito:", minvalue=0.01)
-        if valor is not None:
-            self.saldo, self.extrato = depositar(self.saldo, valor, self.extrato)
-            messagebox.showinfo("Sucesso", "Depósito realizado com sucesso!")
+
+        if cpf and valor:
+            cliente = self.encontrar_cliente(cpf)
+            if cliente and cliente.contas:
+                conta = cliente.contas[0]  # Usando a primeira conta do cliente para o exemplo
+                conta.depositar(valor)
+                messagebox.showinfo("Sucesso", "Depósito realizado com sucesso!")
+            else:
+                messagebox.showerror("Erro", "Cliente ou conta não encontrados.")
+
         self.create_main_menu()
 
     def sacar(self):
         self.clear_screen()
         tk.Label(self.root, text="Sacar", font=("Arial", 16)).pack(pady=10)
 
+        cpf = simpledialog.askstring("Saque", "Informe o CPF do cliente:")
         valor = simpledialog.askfloat("Sacar", "Informe o valor do saque:", minvalue=0.01)
-        if valor is not None:
-            self.saldo, self.extrato, self.numero_saques, msg = sacar(
-                saldo=self.saldo, valor=valor, extrato=self.extrato,
-                limite_saque=self.limite_saque, numero_saques=self.numero_saques, limite_saques=self.LIMITE_SAQUES
-            )
-            messagebox.showinfo("Resultado", msg)
+
+        if cpf and valor:
+            cliente = self.encontrar_cliente(cpf)
+            if cliente and cliente.contas:
+                conta = cliente.contas[0]
+                try:
+                    conta.sacar(valor)
+                    messagebox.showinfo("Sucesso", "Saque realizado com sucesso!")
+                except ValueError as e:
+                    messagebox.showerror("Erro", str(e))
+            else:
+                messagebox.showerror("Erro", "Cliente ou conta não encontrados.")
+
         self.create_main_menu()
 
     def exibir_extrato(self):
         self.clear_screen()
         tk.Label(self.root, text="Extrato", font=("Arial", 16)).pack(pady=10)
 
-        extrato_display = exibir_extrato(self.saldo, extrato=self.extrato)
-        tk.Label(self.root, text=extrato_display, font=("Arial", 12), justify=tk.LEFT).pack(pady=10)
+        cpf = simpledialog.askstring("Extrato", "Informe o CPF do cliente:")
+
+        if cpf:
+            cliente = self.encontrar_cliente(cpf)
+            if cliente and cliente.contas:
+                conta = cliente.contas[0]
+                extrato_display = conta.exibir_extrato()
+                tk.Label(self.root, text=extrato_display, font=("Arial", 12), justify=tk.LEFT).pack(pady=10)
+            else:
+                messagebox.showerror("Erro", "Cliente ou conta não encontrados.")
+
         tk.Button(self.root, text="Voltar", command=self.create_main_menu).pack(pady=5)
 
     def criar_usuario(self):
@@ -128,11 +168,11 @@ class BancoApp:
         cpf = simpledialog.askstring("Novo Usuário", "Informe o CPF (somente números):")
         if cpf and cpf.isdigit() and len(cpf) == 11:
             nome = simpledialog.askstring("Novo Usuário", "Informe o nome completo:")
-            data_nascimento = simpledialog.askstring("Novo Usuário", "Informe a data de nascimento (dd-mm-aaaa):")
-            endereco = simpledialog.askstring("Novo Usuário", "Informe o endereço (logradouro, nro - bairro - cidade/sigla estado):")
+            endereco = simpledialog.askstring("Novo Usuário", "Informe o endereço:")
 
-            self.usuarios, msg = criar_usuario(self.usuarios, nome, data_nascimento, cpf, endereco)
-            messagebox.showinfo("Resultado", msg)
+            cliente = Cliente(nome, cpf, endereco)
+            self.usuarios.append(cliente)
+            messagebox.showinfo("Resultado", "Usuário criado com sucesso.")
         else:
             messagebox.showerror("Erro", "CPF inválido. Deve conter apenas números e ter 11 dígitos.")
         self.create_main_menu()
@@ -143,20 +183,39 @@ class BancoApp:
 
         cpf = simpledialog.askstring("Nova Conta", "Informe o CPF do usuário:")
         if cpf:
-            self.contas, msg = criar_conta(self.contas, self.usuarios, cpf)
-            messagebox.showinfo("Resultado", msg)
+            cliente = self.encontrar_cliente(cpf)
+            if cliente:
+                numero_conta = len(self.contas) + 1
+                conta = Conta(numero=numero_conta, agencia="0001", cliente=cliente)
+                cliente.adicionar_conta(conta)
+                self.contas.append(conta)
+                messagebox.showinfo("Resultado", "Conta criada com sucesso.")
+            else:
+                messagebox.showerror("Erro", "Cliente não encontrado.")
         self.create_main_menu()
 
     def listar_contas(self):
         self.clear_screen()
         tk.Label(self.root, text="Listar Contas", font=("Arial", 16)).pack(pady=10)
 
-        contas_display = listar_contas(self.contas)
-        tk.Label(self.root, text=contas_display, font=("Arial", 12), justify=tk.LEFT).pack(pady=10)
+        if not self.contas:
+            tk.Label(self.root, text="Nenhuma conta cadastrada.", font=("Arial", 12)).pack(pady=10)
+        else:
+            for conta in self.contas:
+                info = f"Agência: {conta.agencia}\nConta: {conta.numero}\nTitular: {conta.cliente.nome}\n"
+                tk.Label(self.root, text=info, font=("Arial", 12), justify=tk.LEFT).pack(pady=5)
+
         tk.Button(self.root, text="Voltar", command=self.create_main_menu).pack(pady=5)
 
+    def encontrar_cliente(self, cpf):
+        for cliente in self.usuarios:
+            if cliente.cpf == cpf:
+                return cliente
+        return None
+
+
+# Inicializando a interface gráfica
 if __name__ == "__main__":
     root = tk.Tk()
     app = BancoApp(root)
-    root.mainloop()  
-    
+    root.mainloop()
