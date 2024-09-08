@@ -1,4 +1,4 @@
-# Sistema Bancário com Tkinter
+# Sistema Bancário em POO e com Tkinter
 
 Este é um aplicativo de sistema bancário simples construído com a biblioteca Tkinter do Python. Ele permite que os usuários realizem operações bancárias básicas como depósitos, saques, visualização de extratos, e gerenciamento de contas e usuários.
 
